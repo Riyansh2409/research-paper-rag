@@ -8,3 +8,4 @@ def create_vectorstore(chunks, embeddings):
     )
 
     return vectorstore
+

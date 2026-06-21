@@ -2,9 +2,7 @@ from src.loader.pdf_loader import load_pdf
 from src.chunking.text_splitter import create_chunks
 from src.embeddings.embedding_model import get_embedding_model
 from src.vectorstore.faiss_store import create_vectorstore
-from src.retriever.retriever import get_retriever
-from src.llm.gemini_model import get_llm
-from src.prompts.prompt_template import build_prompt
+from src.chains.rag_chain import ask_question
 
 # Load PDF
 docs = load_pdf("data/papers/NLP- MODULE 1.pptx.pdf")
@@ -26,41 +24,21 @@ vectorstore = create_vectorstore(
 
 print("✅ Vector Store Created Successfully")
 
-# Create Retriever
-retriever = get_retriever(vectorstore)
+# Chat Loop
+while True:
 
-# User Query
-query = input("Ask a question: ")
+    query = input("\nAsk a question: ")
 
-# Retrieve Relevant Chunks
-results = retriever.invoke(query)
+    if query.lower() in ["exit", "quit", "stop"]:
+        print("\n👋 Goodbye!")
+        break
 
-# Build Context
-context = "\n\n".join(
-    [doc.page_content for doc in results]
-)
+    answer = ask_question(
+        query=query,
+        vectorstore=vectorstore
+    )
 
-print("\nRetrieved Context:")
-print("=" * 50)
-print(context[:1000])
-
-# Load Gemini
-llm = get_llm()
-
-# Create Prompt
-prompt = build_prompt(
-    context=context,
-    question=query
-)
-
-# Generate Answer
-response = llm.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=prompt
-)
-
-print("\n")
-print("=" * 50)
-print("RAG ANSWER")
-print("=" * 50)
-print(response.text)
+    print("\n" + "=" * 50)
+    print("RAG ANSWER")
+    print("=" * 50)
+    print(answer)

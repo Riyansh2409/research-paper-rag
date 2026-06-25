@@ -1,13 +1,13 @@
 import os
-
 from langchain_community.vectorstores import FAISS
 
 VECTOR_DB_PATH = "data/vectorstore"
+INDEX_FILE = os.path.join(VECTOR_DB_PATH, "index.faiss")
 
 
 def create_vectorstore(chunks, embeddings):
 
-    if os.path.exists(VECTOR_DB_PATH):
+    if os.path.exists(INDEX_FILE):
 
         print("Loading existing FAISS index...")
 
@@ -30,4 +30,4 @@ def create_vectorstore(chunks, embeddings):
 
         print("FAISS index saved successfully.")
 
-    return vectorstore  
+    return vectorstore

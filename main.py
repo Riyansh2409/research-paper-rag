@@ -1,11 +1,15 @@
-from src.loader.pdf_loader import load_pdf
+
 from src.chunking.text_splitter import create_chunks
 from src.embeddings.embedding_model import get_embedding_model
 from src.vectorstore.faiss_store import create_vectorstore
 from src.chains.rag_chain import ask_question
-
+from src.loader.pdf_loader import load_pdfs
 # Load PDF
-docs = load_pdf("data/papers/NLP- MODULE 1.pptx.pdf")
+docs = load_pdfs("data/papers")
+# for i, doc in enumerate(docs):
+#     print("=" * 60)
+#     print(doc.metadata)
+#     print(doc.page_content[:500])   # Sirf pehle 500 characters
 
 # Create Chunks
 chunks = create_chunks(docs)
@@ -42,3 +46,6 @@ while True:
     print("RAG ANSWER")
     print("=" * 50)
     print(answer)
+# for doc in docs:
+#     if "RIYANSH" in doc.page_content.upper():
+#         print(doc.page_content)

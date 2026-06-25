@@ -1,3 +1,5 @@
+import os
+
 from src.retriever.retriever import get_retriever
 from src.prompts.prompt_template import build_prompt
 from src.llm.gemini_model import get_llm
@@ -31,4 +33,30 @@ def ask_question(query, vectorstore):
         contents=prompt
     )
 
-    return response.text
+    # Collect Source Information
+    sources = []
+
+    for doc in docs:
+
+        source = os.path.basename(
+            doc.metadata.get("source", "Unknown")
+        )
+
+        page = doc.metadata.get("page", 0) + 1
+
+        source_text = f"📄 {source} | Page {page}"
+
+        if source_text not in sources:
+            sources.append(source_text)
+
+    final_answer = (
+        response.text
+        + "\n\n"
+        + "=" * 50
+        + "\nSOURCES\n"
+        + "=" * 50
+        + "\n"
+        + "\n".join(sources)
+    )
+
+    return final_answer

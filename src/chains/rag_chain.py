@@ -5,7 +5,7 @@ from src.prompts.prompt_template import build_prompt
 from src.llm.gemini_model import get_llm
 
 
-def ask_question(query, vectorstore):
+def ask_question(query, vectorstore, memory):
 
     # Create Retriever
     retriever = get_retriever(vectorstore)
@@ -18,10 +18,14 @@ def ask_question(query, vectorstore):
         [doc.page_content for doc in docs]
     )
 
+    # Get Conversation History
+    history = memory.get_history()
+
     # Build Prompt
     prompt = build_prompt(
         context=context,
-        question=query
+        question=query,
+        history=history
     )
 
     # Load Gemini
@@ -33,7 +37,7 @@ def ask_question(query, vectorstore):
         contents=prompt
     )
 
-    # Collect Source Information
+    # Collect Sources
     sources = []
 
     for doc in docs:

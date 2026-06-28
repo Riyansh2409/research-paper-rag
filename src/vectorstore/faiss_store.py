@@ -1,13 +1,24 @@
 import os
+
 from langchain_community.vectorstores import FAISS
+
+from src.utils.hash_utils import (
+    load_hash,
+    save_hash
+)
 
 VECTOR_DB_PATH = "data/vectorstore"
 INDEX_FILE = os.path.join(VECTOR_DB_PATH, "index.faiss")
 
 
-def create_vectorstore(chunks, embeddings):
+def create_vectorstore(chunks, embeddings, current_hash):
 
-    if os.path.exists(INDEX_FILE):
+    saved_hash = load_hash()
+
+    if (
+        os.path.exists(INDEX_FILE)
+        and saved_hash == current_hash
+    ):
 
         print("Loading existing FAISS index...")
 
@@ -27,6 +38,8 @@ def create_vectorstore(chunks, embeddings):
         )
 
         vectorstore.save_local(VECTOR_DB_PATH)
+
+        save_hash(current_hash)
 
         print("FAISS index saved successfully.")
 

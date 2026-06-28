@@ -4,7 +4,12 @@ from src.vectorstore.faiss_store import create_vectorstore
 from src.chains.rag_chain import ask_question
 from src.loader.pdf_loader import load_pdfs
 from src.memory.chat_memory import ChatMemory
+from src.utils.hash_utils import generate_documents_hash
 
+# Generate Document Hash
+document_hash = generate_documents_hash("data/papers")
+
+print(f"Current Hash : {document_hash}")
 
 # Create Chat Memory
 memory = ChatMemory()
@@ -28,7 +33,8 @@ embeddings = get_embedding_model()
 # Create FAISS Vector Store
 vectorstore = create_vectorstore(
     chunks=chunks,
-    embeddings=embeddings
+    embeddings=embeddings,
+    current_hash=document_hash
 )
 
 print("✅ Vector Store Created Successfully")

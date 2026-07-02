@@ -53,6 +53,21 @@ if "total_pages" not in st.session_state:
 
 if "total_chunks" not in st.session_state:
     st.session_state.total_chunks = 0    
+    
+    
+def export_chat():
+
+    chat = ""
+
+    for message in st.session_state.messages:
+
+        role = message["role"].capitalize()
+
+        chat += f"{role}:\n"
+        chat += f"{message['content']}\n"
+        chat += "-" * 60 + "\n"
+
+    return chat
 
 
 # ----------------------------------------------------
@@ -129,7 +144,17 @@ with st.sidebar:
     else:
 
         st.info("Upload PDFs to view statistics.")
-    
+    st.divider()
+
+    st.subheader("💾 Export Chat")
+
+    st.download_button(
+        label="⬇ Download Chat (.txt)",
+        data=export_chat(),
+        file_name="chat_history.txt",
+        mime="text/plain",
+        use_container_width=True
+    )    
 # ----------------------------------------------------
 # Process PDFs
 # ----------------------------------------------------
@@ -182,6 +207,7 @@ if uploaded_files:
             # Save Uploaded File Information
             st.session_state.uploaded_file_names = []
             st.session_state.uploaded_file_pages = []
+            
             for file in uploaded_files:
 
                 pdf_path = os.path.join(
@@ -189,8 +215,8 @@ if uploaded_files:
                 file.name
               )
                 reader = PdfReader(pdf_path)
-                st.session_state.uploaded_file_names.append( file.name)
-                st.session_state.uploaded_file_pages.append( len(reader.pages))
+                st.session_state.uploaded_file_names.append(file.name)
+                st.session_state.uploaded_file_pages.append(len(reader.pages))
 
             st.session_state.pdf_count = len(uploaded_files)
 

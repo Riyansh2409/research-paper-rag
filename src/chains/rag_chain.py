@@ -5,10 +5,13 @@ from src.prompts.prompt_template import build_prompt
 from src.llm.gemini_model import get_llm
 
 
-def ask_question(query, vectorstore, memory):
+def ask_question(query, vectorstore, memory, top_k=3):
 
     # Create Retriever
-    retriever = get_retriever(vectorstore)
+    retriever = get_retriever(
+        vectorstore,
+        top_k=top_k
+    )
 
     # Retrieve Relevant Chunks
     docs = retriever.invoke(query)
@@ -54,6 +57,7 @@ def ask_question(query, vectorstore, memory):
             sources.append(source_text)
 
     return {
-      "answer": response.text,
-      "sources": sources
+        "answer": response.text,
+        "sources": sources,
+        "docs": docs
     }

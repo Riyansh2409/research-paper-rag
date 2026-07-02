@@ -154,6 +154,16 @@ with st.sidebar:
         file_name="chat_history.txt",
         mime="text/plain",
         use_container_width=True
+    )   
+    st.divider()
+
+    st.subheader("⚙️ Retrieval Settings")
+
+    top_k = st.slider(
+        "Retrieved Chunks",
+        min_value=1,
+        max_value=10,
+        value=3
     )    
 # ----------------------------------------------------
 # Process PDFs
@@ -302,7 +312,8 @@ if st.session_state.documents_loaded:
                     result = ask_question(
                         query=question,
                         vectorstore=st.session_state.vectorstore,
-                        memory=st.session_state.memory
+                        memory=st.session_state.memory,
+                        top_k=top_k
                     )
 
                     answer = result["answer"]
@@ -312,6 +323,20 @@ if st.session_state.documents_loaded:
                     with st.expander("📚 Sources Used"):
                         for source in sources:
                             st.container(border=True).markdown(source)
+                    
+                    with st.expander("📄 Retrieved Chunks"):
+
+                        for i, doc in enumerate(result["docs"], start=1):
+
+                            st.markdown(f"*** Chunk {i}")
+
+                            st.caption(
+                                f"📄 {os.path.basename(doc.metadata['source'])} | "
+                                f"Page {doc.metadata['page'] + 1}"
+                                )       
+                            st.container(border=True).markdown(
+                                doc.page_content
+                            ) 
 
                 except Exception as e:
 

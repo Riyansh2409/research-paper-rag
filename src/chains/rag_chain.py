@@ -53,14 +53,7 @@ def ask_question(query, vectorstore, memory):
         if source_text not in sources:
             sources.append(source_text)
 
-    final_answer = (
-        response.text
-        + "\n\n"
-        + "=" * 50
-        + "\nSOURCES\n"
-        + "=" * 50
-        + "\n"
-        + "\n".join(sources)
-    )
-
-    return final_answer
+    return {
+      "answer": response.text,
+      "sources": sources
+    }
